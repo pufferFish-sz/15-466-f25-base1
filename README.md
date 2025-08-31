@@ -1,8 +1,8 @@
-# (TODO: your game's title)
+# Don't Get Frogie Fired
 
-Author: (TODO: your name)
+Author: Shangyi Zhu
 
-Design: (TODO: In two sentences or fewer, describe what is new and interesting about your game.)
+Design: Frogie the Frog needs to pick out the bugs from the rest of the cargo, and he does it with his tongue
 
 Screen Shot:
 
