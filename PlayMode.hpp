@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <deque>
+#include "Frogie.hpp"
 
 struct PlayMode : Mode {
 	PlayMode();
@@ -18,18 +19,20 @@ struct PlayMode : Mode {
 	//----- game state -----
 
 	//input tracking:
-	struct Button {
-		uint8_t downs = 0;
-		uint8_t pressed = 0;
-	} left, right, down, up;
+	//struct Button {
+	//	uint8_t downs = 0;
+	//	uint8_t pressed = 0;
+	//} left, right, down, up;
 
-	//some weird background animation:
-	float background_fade = 0.0f;
+	////some weird background animation:
+	//float background_fade = 0.0f;
 
-	//player position:
-	glm::vec2 player_at = glm::vec2(0.0f);
+	////player position:
+	//glm::vec2 player_at = glm::vec2(0.0f);
 
 	//----- drawing handled by PPU466 -----
 
 	PPU466 ppu;
+
+	Frogie frogie;
 };

@@ -121,7 +121,9 @@ const game_objs = [
 	maek.CPP('Mode.cpp'),
 	maek.CPP('gl_compile_program.cpp'),
 	maek.CPP('GL.cpp'),
-	maek.CPP('AssetImporter.cpp')
+	maek.CPP('AssetImporter.cpp'),
+	maek.CPP('Frogie.cpp'),
+	maek.CPP('GameAssets.cpp')
 ];
 
 //the '[exeFile =] LINK(objFiles, exeFileBase, [, options])' links an array of objects into an executable:

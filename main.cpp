@@ -111,55 +111,6 @@ int main(int argc, char **argv) {
 	//------------ load assets --------------
 	call_load_functions();
 
-	{
-		PPU466 ppu; // local test instance 
-
-		try {
-			// 1) load the PNG to get dimensions 
-			std::string png_path = data_path("../assets/frogie_idle_1.png");
-			glm::uvec2 size{};
-			std::vector<glm::u8vec4> rgba;
-			load_png(png_path, &size, &rgba, LowerLeftOrigin);
-
-			std::cout << "[PaletteTest] " << png_path
-				<< "  size = " << size.x << " x " << size.y << "\n";
-
-			// 2) run palette importer 
-			const uint8_t  palette_slot = 0;  
-			const uint32_t dst_tile_start = 0; 
-			auto res = AssetImporter::import_png(
-				png_path, ppu, palette_slot, dst_tile_start
-			);
-
-			// 3) print the palette that was written
-			const auto& pal = ppu.palette_table[palette_slot];
-			auto print_rgba = [](const glm::u8vec4& c) {
-				std::cout << "rgba("
-					<< int(c.r) << "," << int(c.g) << "," << int(c.b) << "," << int(c.a)
-					<< ")  hex=#"
-					<< std::hex << std::setw(2) << std::setfill('0') << int(c.r)
-					<< std::setw(2) << int(c.g)
-					<< std::setw(2) << int(c.b)
-					<< std::setw(2) << int(c.a)
-					<< std::dec << "\n";
-				};
-
-			std::cout << "[PaletteTest] palette slot " << int(palette_slot) << ":\n";
-			for (int i = 0; i < 4; ++i) {
-				std::cout << "  [" << i << "] ";
-				print_rgba(pal[i]);
-			}
-
-			// how many tiles were produced
-			 std::cout << "[PaletteTest] tiles written = " << res.tile_count
-			           << " starting at index " << res.first_tile_index << "\n";
-
-		}
-		catch (const std::exception& e) {
-			std::cerr << "[PaletteTest] ERROR: " << e.what() << "\n";
-		}
-	}
-
 	//------------ create game mode + make current --------------
 	Mode::set_current(std::make_shared< PlayMode >());
 

@@ -7,6 +7,7 @@
 #include <vector>
 #include <array>
 #include <cstdint>
+#include "data_path.hpp"
 
 using glm::uvec2;
 using glm::u8vec4;
@@ -112,8 +113,18 @@ static uint32_t slice_png_to_tiles(
                     indices[py][px] = rgba_to_index(px_rgba, palette);
                 }
             }
+
             const PPU466::Tile t = AssetImporter::pack_tile(indices);
             ppu.tile_table[write_index] = t;
+
+            // --- Debug print: first 2 rows of bitplanes for first few tiles ---
+            if (write_index < dst_tile_offset + 4) { // only first 4 tiles
+                std::cout << "[Importer] Tile " << write_index
+                    << " bit0[0..1]=" << std::hex << int(t.bit0[0]) << ","
+                    << int(t.bit0[1])
+                    << " bit1[0..1]=" << int(t.bit1[0]) << ","
+                    << int(t.bit1[1]) << std::dec << "\n";
+            }
             write_index++;
         }
     }
@@ -152,12 +163,15 @@ FileImportResult AssetImporter::import_png(
 
     // Slice the png into 8x8 tiles
     uint32_t num_tiles = slice_png_to_tiles(rgba, size, pal, ppu, dst_tile_offset);
-    // for testing purposes now:
+
+    // Print out the info regarding this import:
     FileImportResult r{};
     r.filename         = png_path;        
     r.palette_index    = palette_slot;
     r.first_tile_index = dst_tile_offset;
-    r.tile_count       = num_tiles;            
+    r.tile_count       = num_tiles;   
+
+
     return r;
 }
 
