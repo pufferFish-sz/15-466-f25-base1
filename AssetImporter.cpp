@@ -175,6 +175,70 @@ FileImportResult AssetImporter::import_png(
     return r;
 }
 
+static void verify_colors_in_palette(
+    const std::string& png_path,
+    const std::vector<glm::u8vec4>& rgba,
+    const std::array<glm::u8vec4, 4>& pal
+) {
+    auto same = [](const glm::u8vec4& a, const glm::u8vec4& b) {
+        return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
+        };
+    for (auto const& px : rgba) {
+        if (px.a == 0) continue; // transparent is index 0 by convention
+        bool ok = false;
+        for (uint8_t i = 1; i < 4; ++i) {
+            if (same(px, pal[i])) { ok = true; break; }
+        }
+        if (!ok) {
+            throw std::runtime_error(
+                "[Importer] '" + png_path + "': color "
+                + std::to_string(px.r) + "," + std::to_string(px.g) + ","
+                + std::to_string(px.b) + "," + std::to_string(px.a)
+                + " not in fixed palette."
+            );
+        }
+    }
+}
+
+FileImportResult AssetImporter::import_png_with_fixed_palette(
+    const std::string& png_path,
+    PPU466& ppu,
+    uint8_t palette_slot,
+    uint32_t dst_tile_offset,
+    const std::array<glm::u8vec4, 4>& fixed_palette
+) {
+    if (palette_slot >= ppu.palette_table.size()) {
+        throw std::runtime_error("[Importer] no palette slots left for " + png_path);
+    }
+
+    uvec2 size{};
+    std::vector<u8vec4> rgba;
+    if (!load_png_rgba(png_path, &size, &rgba)) {
+        throw std::runtime_error("[Importer] failed to load " + png_path);
+    }
+
+    if (!size_multiples_of_8(size)) {
+        throw std::runtime_error(
+            "[Importer] '" + png_path + "' size must be multiples of 8 (got "
+            + std::to_string(size.x) + "x" + std::to_string(size.y) + ")"
+        );
+    }
+
+    // Ensure every opaque pixel is one of the 3 colors in fixed palette:
+    verify_colors_in_palette(png_path, rgba, fixed_palette);
+
+    // Pack using the fixed palette (indices 0..3 come from 'fixed_palette'):
+    uint32_t num_tiles = slice_png_to_tiles(rgba, size, fixed_palette, ppu, dst_tile_offset);
+
+    FileImportResult r{};
+    r.filename = png_path;
+    r.palette_index = palette_slot;    // same slot every frame
+    r.first_tile_index = dst_tile_offset;
+    r.tile_count = num_tiles;
+    return r;
+}
+
+
 PPU466::Tile AssetImporter::pack_tile(const uint8_t tiles[8][8]) {
     PPU466::Tile t{};
     for (int y = 0; y < 8; ++y) {

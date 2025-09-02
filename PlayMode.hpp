@@ -6,6 +6,7 @@
 #include <vector>
 #include <deque>
 #include "Frogie.hpp"
+#include "Cargo.hpp"
 
 struct PlayMode : Mode {
 	PlayMode();
@@ -24,15 +25,12 @@ struct PlayMode : Mode {
 	//	uint8_t pressed = 0;
 	//} left, right, down, up;
 
-	////some weird background animation:
-	//float background_fade = 0.0f;
-
-	////player position:
-	//glm::vec2 player_at = glm::vec2(0.0f);
-
 	//----- drawing handled by PPU466 -----
 
 	PPU466 ppu;
+	CargoManager cargoManager;
+	Box box;
+	Bug bug;
 
 	Frogie frogie;
 };
