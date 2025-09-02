@@ -7,6 +7,7 @@ class Frogie {
 public:
 	std::array<FileImportResult, 3> idle_frames{};
 	std::array<FileImportResult, 6> tongue_frames{};
+	bool fired = false;
 
 	// Position of Frogie
 	uint8_t Frogie_x = 10;
@@ -18,6 +19,7 @@ public:
 	void update(float dt);
 	void start_tongue();
 	uint8_t tongue_frame = 0;
+	bool tongue_active = false;
 
 	// Visibility
 	bool visible = true;
@@ -30,8 +32,6 @@ private:
 	uint8_t frame = 0;
 
 	// Tongue
-	bool tongue_active = false;
-	//uint8_t tongue_frame = 0;
 	float tongue_time = 0.0f;
 	float tongue_fps = 18.0f;
 	float tongue_cooldown_left = 0.0f;

@@ -1,4 +1,4 @@
-#include "PlayMode.hpp"
+﻿#include "PlayMode.hpp"
 
 //for the GL_ERRORS() macro:
 #include "gl_errors.hpp"
@@ -43,9 +43,39 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 }
 
 void PlayMode::update(float elapsed) {
+	if (!cargoManager.stopped) {
+		cargoManager.update(elapsed);
+		frogie.update(elapsed);
 
-	cargoManager.update(elapsed);
-	frogie.update(elapsed);
+		// if bug's x is within 16 pixels of the frog's x and the tongue is out
+		// then the bug is considered eaten
+
+		const int frog_x_line = int(frogie.Frogie_x);
+
+		for (auto& g : cargoManager.bugs) {
+			if (!g.alive) continue;
+
+			const int bug_x = int(std::floor(g.xf));
+			const int dx = frog_x_line - bug_x;  
+
+			// only eats if tongue is out and bug is within 16 px in front
+			if (0 <= dx && dx <= 16) {
+				if (frogie.tongue_frame >= 3) {
+					g.alive = false;              // eaten
+					std::cout << "bug eaten\n";
+					break;
+				}
+			
+			}
+			if (bug_x < frog_x_line && frogie.tongue_frame <= 3) {
+				cargoManager.stopped = true;
+				frogie.fired = true;
+				std::cout << "frogie fired\n";
+				break;
+			}
+		}
+	}
+
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {

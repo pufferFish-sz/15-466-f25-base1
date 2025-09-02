@@ -92,6 +92,8 @@ CargoManager::CargoManager() {
 }
 
 void CargoManager::update(float dt) {
+
+    if (stopped) return;
     // Move all
     for (auto& b : boxes) {
         b.update(dt);

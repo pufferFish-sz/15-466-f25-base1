@@ -48,6 +48,8 @@ struct CargoManager {
     std::vector<Box> boxes;
     std::vector<Bug> bugs;
 
+    bool stopped = false;
+
     // spawn
     float spawn_interval_s = 0.70f;
     float spawn_timer_s = 0.0f;
